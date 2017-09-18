@@ -18,11 +18,11 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
         $request->query = $query;
 
         $cookies = $this->prophesize(ParameterBag::class);
-        $cookies->has('cmp')->willReturn(false)->shouldBeCalledTimes(1);
+        $cookies->has('exid')->willReturn(false)->shouldBeCalledTimes(1);
 
         $request->cookies = $cookies;
 
-        $manager = new CambuilderTrackingParameterManager();
+        $manager = new CambuilderTrackingParameterManager(1);
 
         $result = $manager->extract($request->reveal());
 
@@ -39,15 +39,13 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
         $request->query = $query;
 
         $cookies = $this->prophesize(ParameterBag::class);
-        $cookies->has('cmp')->willReturn(true)->shouldBeCalledTimes(1);
-        $cookies->get('cmp')->willReturn(123)->shouldBeCalledTimes(1);
-
         $cookies->has('exid')->willReturn(true)->shouldBeCalledTimes(1);
+        $cookies->get('cmp', 1)->willReturn(123)->shouldBeCalledTimes(1);
         $cookies->get('exid')->willReturn('UUID987654321')->shouldBeCalledTimes(1);
 
         $request->cookies = $cookies;
 
-        $manager = new CambuilderTrackingParameterManager();
+        $manager = new CambuilderTrackingParameterManager(1);
 
         $result = $manager->extract($request->reveal());
 
@@ -69,7 +67,7 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
 
         $request->query = $query;
 
-        $manager = new CambuilderTrackingParameterManager();
+        $manager = new CambuilderTrackingParameterManager(1);
 
         $result = $manager->extract($request->reveal());
 
@@ -86,7 +84,7 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
     {
         $trackingParameters = new ParameterBag([]);
 
-        $formatter = new CambuilderTrackingParameterManager();
+        $formatter = new CambuilderTrackingParameterManager(1);
 
         $result = $formatter->format($trackingParameters);
 
@@ -102,7 +100,7 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
             'exid' => 'UUID987654321',
         ]);
 
-        $formatter = new CambuilderTrackingParameterManager();
+        $formatter = new CambuilderTrackingParameterManager(1);
 
         $result = $formatter->format($trackingParameters);
 
