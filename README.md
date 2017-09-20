@@ -48,6 +48,8 @@ exs_lander_tracking_cambuilder:
     default_cmp: 1
 ```
 
+This default value will be used over `EXS-LanderTrackingHouseBundle`'s `cmp` default value.
+
 ## Usage
 
 Example :
