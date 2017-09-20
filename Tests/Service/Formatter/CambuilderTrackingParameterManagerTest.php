@@ -4,72 +4,17 @@ namespace EXS\LanderTrackingCambuilderBundle\Tests\Service\TrackingParameterMana
 
 use EXS\LanderTrackingCambuilderBundle\Service\TrackingParameterManager\CambuilderTrackingParameterManager;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 
 class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testExtractWithoutParametersNorCookies()
+    public function testExtractFromQuery()
     {
-        $request = $this->prophesize(Request::class);
-
-        $query = $this->prophesize(ParameterBag::class);
-        $query->get('AFNO')->willReturn(null)->shouldBeCalledTimes(1);
-
-        $request->query = $query;
-
-        $cookies = $this->prophesize(ParameterBag::class);
-        $cookies->has('exid')->willReturn(false)->shouldBeCalledTimes(1);
-
-        $request->cookies = $cookies;
-
-        $manager = new CambuilderTrackingParameterManager(1);
-
-        $result = $manager->extract($request->reveal());
-
-        $this->assertEmpty($result);
-    }
-
-    public function testExtractWithoutParametersButCookies()
-    {
-        $request = $this->prophesize(Request::class);
-
-        $query = $this->prophesize(ParameterBag::class);
-        $query->get('AFNO')->willReturn(null)->shouldBeCalledTimes(1);
-
-        $request->query = $query;
-
-        $cookies = $this->prophesize(ParameterBag::class);
-        $cookies->has('exid')->willReturn(true)->shouldBeCalledTimes(1);
-        $cookies->get('cmp', 1)->willReturn(123)->shouldBeCalledTimes(1);
-        $cookies->get('exid')->willReturn('UUID987654321')->shouldBeCalledTimes(1);
-
-        $request->cookies = $cookies;
-
-        $manager = new CambuilderTrackingParameterManager(1);
-
-        $result = $manager->extract($request->reveal());
-
-        $this->assertCount(2, $result);
-
-        $this->assertArrayHasKey('cmp', $result);
-        $this->assertEquals(123, $result['cmp']);
-
-        $this->assertArrayHasKey('exid', $result);
-        $this->assertEquals('UUID987654321', $result['exid']);
-    }
-
-    public function testExtractWithParameters()
-    {
-        $request = $this->prophesize(Request::class);
-
         $query = $this->prophesize(ParameterBag::class);
         $query->get('AFNO')->willReturn('1-123-UUID987654321')->shouldBeCalledTimes(1);
 
-        $request->query = $query;
-
         $manager = new CambuilderTrackingParameterManager(1);
 
-        $result = $manager->extract($request->reveal());
+        $result = $manager->extractFromQuery($query->reveal());
 
         $this->assertCount(2, $result);
 
@@ -84,9 +29,9 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
     {
         $trackingParameters = new ParameterBag([]);
 
-        $formatter = new CambuilderTrackingParameterManager(1);
+        $manager = new CambuilderTrackingParameterManager(1);
 
-        $result = $formatter->format($trackingParameters);
+        $result = $manager->format($trackingParameters);
 
         $this->assertCount(1, $result);
         $this->assertArrayHasKey('AFNO', $result);
@@ -100,12 +45,23 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
             'exid' => 'UUID987654321',
         ]);
 
-        $formatter = new CambuilderTrackingParameterManager(1);
+        $manager = new CambuilderTrackingParameterManager(1);
 
-        $result = $formatter->format($trackingParameters);
+        $result = $manager->format($trackingParameters);
 
         $this->assertCount(1, $result);
         $this->assertArrayHasKey('AFNO', $result);
         $this->assertEquals('1-123-UUID987654321', $result['AFNO']);
+    }
+
+    public function testInitialize()
+    {
+        $manager = new CambuilderTrackingParameterManager(1);
+
+        $result = $manager->initialize();
+
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey('cmp', $result);
+        $this->assertEquals(1, $result['cmp']);
     }
 }
