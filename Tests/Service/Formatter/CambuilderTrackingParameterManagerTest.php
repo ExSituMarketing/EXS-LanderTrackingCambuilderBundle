@@ -21,8 +21,8 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('cmp', $result);
         $this->assertEquals(123, $result['cmp']);
 
-        $this->assertArrayHasKey('exid', $result);
-        $this->assertEquals('UUID987654321', $result['exid']);
+        $this->assertArrayHasKey('u', $result);
+        $this->assertEquals('UUID987654321', $result['u']);
     }
 
     public function testFormatWithEmptyArray()
@@ -42,7 +42,7 @@ class CambuilderTrackingParameterManagerTest extends \PHPUnit_Framework_TestCase
     {
         $trackingParameters = new ParameterBag([
             'cmp' => 123,
-            'exid' => 'UUID987654321',
+            'u' => 'UUID987654321',
         ]);
 
         $manager = new CambuilderTrackingParameterManager(1);

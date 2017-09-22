@@ -38,11 +38,11 @@ class CambuilderTrackingParameterManager implements TrackingParameterQueryExtrac
 
         if (
             (null !== $afno = $query->get('AFNO'))
-            && (preg_match('`^1-(?<cmp>[a-z0-9]+)-(?<exid>[a-z0-9]+)$`i', $afno, $matches))
+            && (preg_match('`^1-(?<cmp>[a-z0-9]+)-(?<u>[a-z0-9]+)$`i', $afno, $matches))
         ) {
-            /** Get 'cmp' and 'exid' from 'AFNO' query parameter. */
+            /** Get 'cmp' and 'u' from 'AFNO' query parameter. */
             $trackingParameters['cmp'] = $matches['cmp'];
-            $trackingParameters['exid'] = $matches['exid'];
+            $trackingParameters['u'] = $matches['u'];
         }
 
         return $trackingParameters;
@@ -55,11 +55,11 @@ class CambuilderTrackingParameterManager implements TrackingParameterQueryExtrac
     {
         $afno = null;
 
-        if ($trackingParameters->has('exid')) {
+        if ($trackingParameters->has('u')) {
             $afno = sprintf(
                 '1-%s-%s',
                 $trackingParameters->get('cmp'),
-                $trackingParameters->get('exid')
+                $trackingParameters->get('u')
             );
         }
 
