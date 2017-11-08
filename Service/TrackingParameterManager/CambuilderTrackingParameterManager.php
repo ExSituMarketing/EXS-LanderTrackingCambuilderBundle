@@ -36,17 +36,23 @@ class CambuilderTrackingParameterManager implements TrackingParameterQueryExtrac
     {
         $trackingParameters = [];
 
-        if (
-            (null !== $afno = $query->get('AFNO'))
-            && (preg_match('`^1-(?<c>[a-z0-9]+)-(?<u>[a-z0-9_]+)`i', $afno, $matches))
-        ) {
-            /** Get 'c' and 'u' from 'AFNO' query parameter. */
-            $trackingParameters['c'] = $matches['c'];
-            $trackingParameters['u'] = $matches['u'];
+        if ($query->has('AFNO')) {
+            $query = $query->get('AFNO');
+            $parts = explode('-', $query);
+            switch (count($parts)) {
+                case 2:
+                    $trackingParameters['c'] = $parts[1];
+                    break;
+                case 3:
+                    $trackingParameters['c'] = $parts[1];
+                    $trackingParameters['u'] = $parts[2];
+                    break;
+            }
         }
 
         return $trackingParameters;
     }
+
 
     /**
      * {@inheritdoc}
